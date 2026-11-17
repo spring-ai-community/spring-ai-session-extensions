@@ -15,7 +15,10 @@
  */
 
 /**
- * Turn state for a Spring AI session, kept as events in the session log.
+ * The turns of a Spring AI session, recorded as events in its log: whether a turn runs,
+ * under which run id, and why the last one ended; a request to stop it; and a question a
+ * turn parks on, with its answer. {@link org.springaicommunity.session.turn.TurnService}
+ * reads and writes them through a {@code SessionService}, and works with any store.
  */
 @NullMarked
 package org.springaicommunity.session.turn;

@@ -25,7 +25,7 @@ Stores beyond the ones in Spring AI go into [`session-repositories`](session-rep
 
 The group id is `org.springaicommunity`. The Java packages start with `org.springaicommunity.session`.
 
-Both modules are empty for now. Each has a test that checks the parts of Spring AI it builds on.
+`spring-ai-session-turn` has the `TurnService`: it starts, ends, interrupts, parks and resumes the turns of a session, and records each change as a `TURN.*` event in the session's log. It works with any Spring AI session store. `spring-ai-session-turn-advisor` is empty for now.
 
 ## Building
 
