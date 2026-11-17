@@ -1,3 +1,6 @@
+![Spring AI](assets/images/spring-ai-title-logo-light.svg#only-light){ width="320" }
+![Spring AI](assets/images/spring-ai-title-logo-dark.svg#only-dark){ width="320" }
+
 # Spring AI Session Extensions
 
 Add-ons for the session support in [Spring AI](https://docs.spring.io/spring-ai/reference/) 2.1.
@@ -16,6 +19,8 @@ It uses only the public extension points of the session: event types of its own,
 | **Session Turn** | `spring-ai-session-turn` | Turn state for a session, kept as events in the session log. No dependency on the `ChatClient`. |
 | **Session Turn Advisor** | `spring-ai-session-turn-advisor` | The `ChatClient` binding of the turn: an advisor around the Spring AI session advisors. |
 | **BOM** | `spring-ai-session-extensions-bom` | Bill of Materials for the module versions. |
+
+[Turn Status](turn/turn-status.md) explains the turn service, and [Turns in the ChatClient](turn/chat-client.md) the planned `ChatClient` binding.
 
 Stores beyond the ones in Spring AI go into the `session-repositories` folder of the project.
 A store is built here first and moves into Spring AI when it is stable.

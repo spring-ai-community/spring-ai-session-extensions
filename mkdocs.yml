@@ -6,16 +6,18 @@ edit_uri: edit/main/docs/
 
 theme:
   name: material
+  logo: assets/images/spring-ai-logo.svg
+  favicon: assets/images/spring-ai-logo.svg
   palette:
     - scheme: default
-      primary: teal
-      accent: teal
+      primary: custom
+      accent: custom
       toggle:
         icon: material/brightness-7
         name: Switch to dark mode
     - scheme: slate
-      primary: teal
-      accent: teal
+      primary: custom
+      accent: custom
       toggle:
         icon: material/brightness-4
         name: Switch to light mode
@@ -37,6 +39,9 @@ theme:
 
 nav:
   - Home: index.md
+  - Turns:
+    - Turn Status: turn/turn-status.md
+    - Turns in the ChatClient: turn/chat-client.md
 
 markdown_extensions:
   - admonition

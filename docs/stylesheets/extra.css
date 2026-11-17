@@ -15,3 +15,65 @@
 .mermaid svg {
   height: auto;
 }
+
+/*
+ * Colors of spring.io: the Spring green for accents, blue links, a white header in the
+ * light scheme and the spring.io dark background in the dark scheme.
+ */
+:root {
+  --spring-green: #6db33f;
+  --spring-green-transparent: #6db33f1a;
+}
+
+[data-md-color-scheme="default"] {
+  --md-primary-fg-color: #ffffff;
+  --md-primary-fg-color--light: #ffffff;
+  --md-primary-fg-color--dark: #f5f5f5;
+  --md-primary-bg-color: #191e1e;
+  --md-primary-bg-color--light: #191e1e8a;
+  --md-accent-fg-color: var(--spring-green);
+  --md-accent-fg-color--transparent: var(--spring-green-transparent);
+  --md-typeset-a-color: #086dc3;
+}
+
+[data-md-color-scheme="slate"] {
+  --md-default-bg-color: #1b1f23;
+  --md-primary-fg-color: #1b1f23;
+  --md-primary-fg-color--light: #2b2f33;
+  --md-primary-fg-color--dark: #17191c;
+  --md-primary-bg-color: #ffffff;
+  --md-primary-bg-color--light: #ffffffb3;
+  --md-accent-fg-color: var(--spring-green);
+  --md-accent-fg-color--transparent: var(--spring-green-transparent);
+  --md-typeset-a-color: #1f98ff;
+  --md-code-bg-color: #2b2f33;
+}
+
+/* A thin rule under the header and the tabs, as on spring.io. */
+.md-header,
+.md-tabs {
+  border-bottom: 1px solid #d9e9e9;
+}
+
+[data-md-color-scheme="slate"] .md-header,
+[data-md-color-scheme="slate"] .md-tabs {
+  border-bottom-color: #2b2f33;
+}
+
+/* The active tab and the hovered header links take the Spring green. */
+.md-tabs__item--active .md-tabs__link,
+.md-tabs__link:hover,
+.md-header__button:hover {
+  color: var(--spring-green);
+}
+
+/* The search box on the white header: light grey instead of Material's dark overlay. */
+@media screen and (min-width: 60em) {
+  [data-md-color-scheme="default"] .md-search__form {
+    background-color: #f5f5f5;
+  }
+
+  [data-md-color-scheme="default"] .md-search__form:hover {
+    background-color: #ebf2f2;
+  }
+}
