@@ -43,7 +43,7 @@ import org.springframework.util.Assert;
  * Question question = ToolConfirmationQuestion
  *     .of(replyEventId, reply, ToolCallDecisions.awaitingDecision(response))
  *     .toQuestion();
- * turns.park(sessionId, runId, question);
+ * turns.park(sessionId, turn, question);
  *
  * // The UI, with the person's decisions
  * ToolConfirmationQuestion asked = ToolConfirmationQuestion.from(turns.pendingQuestion(sessionId));
@@ -115,8 +115,7 @@ public record ToolConfirmationQuestion(String replyEventId, List<ToolCall> toolC
 	}
 
 	/**
-	 * Reads the question a {@link org.springframework.ai.session.TurnEventTypes#QUESTION}
-	 * event records.
+	 * Reads the question a {@link TurnEventTypes#QUESTION} event records.
 	 * @throws IllegalArgumentException if the event is not a question event, the question
 	 * is of another kind, or its payload lacks the reply event id
 	 */

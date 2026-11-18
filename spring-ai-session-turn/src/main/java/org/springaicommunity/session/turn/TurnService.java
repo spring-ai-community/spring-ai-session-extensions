@@ -46,8 +46,13 @@ import org.springframework.util.StringUtils;
  * TurnService turns = new TurnService(sessionService);
  * TurnStatus turn = turns.start(sessionId, runId);
  * // ... run the turn
- * turns.end(sessionId, turn.runId(), StopReason.END_TURN);
+ * turns.end(sessionId, turn, StopReason.END_TURN);
  * }</pre>
+ * <p>
+ * A turn is identified by the status that {@link #start} or {@link #resume} returned for
+ * it, not by its run id: {@link #end} and {@link #park} take that status. A run id may
+ * repeat, a run may hold successive turns of a session, so only the status tells one turn
+ * from a later one under the same run id.
  *
  * @author Christian Tzolov
  * @since 0.1.0
@@ -104,10 +109,10 @@ public final class TurnService {
 	 * Starting a turn is optional. A harness that never calls this method leaves the
 	 * session idle and appends events freely: an append never requires a running turn.
 	 * @param sessionId the session
-	 * @param runId the harness's run, the token that owns the turn and ends it with
-	 * {@link #end}. The session does not interpret it: one run may hold a turn in each of
-	 * several sessions, and successive turns in one. When {@code null} or blank a random
-	 * UUID is generated; the returned status carries it.
+	 * @param runId the harness's run, recorded with the turn. The session does not
+	 * interpret it: one run may hold a turn in each of several sessions, and successive
+	 * turns in one. When {@code null} or blank a random UUID is generated; the returned
+	 * status carries it.
 	 * @return the new status, {@code RUNNING} under the effective run id
 	 * @throws TurnInProgressException if a turn runs on the session
 	 * @throws TurnParkedException if the session is parked on a question; {@link #resume}
@@ -135,22 +140,21 @@ public final class TurnService {
 	}
 
 	/**
-	 * Ends the turn of the run id with the given reason and returns the status after the
-	 * call.
+	 * Ends the turn with the given reason and returns the status after the call.
 	 * <p>
-	 * Only the run that holds the turn can end it. When the session is not {@code
-	 * RUNNING} under this run id, nothing is written and the status as it stands is
-	 * returned: another writer ended the turn first, an {@link #interrupt} for example,
-	 * and that end stands. A harness therefore calls this method unconditionally when its
-	 * turn is over and reads the result to learn whether its own end was recorded:
-	 * <pre>{@code
-	 * TurnStatus ended = turns.end(sessionId, runId, StopReason.END_TURN);
-	 * if (!runId.equals(ended.runId()) || ended.stopReason() != StopReason.END_TURN) {
+	 * Only the holder of the turn can end it. When the turn no longer runs, nothing is
+	 * written and the status as it stands is returned: another writer ended the turn
+	 * first, an {@link #interrupt} for example, and that end stands. This holds also when
+	 * a later turn runs under the same run id: a late end never ends a later turn. A
+	 * harness therefore calls this method unconditionally when its turn is over and reads
+	 * the result to learn whether its own end was recorded: <pre>{@code
+	 * TurnStatus ended = turns.end(sessionId, turn, StopReason.END_TURN);
+	 * if (ended.stopReason() != StopReason.END_TURN) {
 	 *     // another writer ended the turn first; ended says how it stands now
 	 * }
 	 * }</pre>
 	 * @param sessionId the session
-	 * @param runId the run that started the turn
+	 * @param turn the turn: the status that {@link #start} or {@link #resume} returned
 	 * @param stopReason why the turn ends: {@link StopReason#END_TURN} when the model
 	 * answered, {@link StopReason#ERROR} when the call failed
 	 * @return the status after the call: {@code IDLE} with this reason when this call
@@ -159,12 +163,12 @@ public final class TurnService {
 	 * still runs, so the harness retries the call or leaves the turn to an
 	 * {@link #interrupt}
 	 */
-	public TurnStatus end(String sessionId, String runId, StopReason stopReason) {
+	public TurnStatus end(String sessionId, TurnStatus turn, StopReason stopReason) {
 		Assert.hasText(sessionId, "sessionId must not be null or empty");
-		Assert.hasText(runId, "runId must not be null or empty");
+		String runId = runIdOf(turn);
 		Assert.notNull(stopReason, "stopReason must not be null");
 		return writeStatus(sessionId, (version, current) -> {
-			if (!current.isRunning(runId)) {
+			if (!current.stillRuns(turn)) {
 				return current;
 			}
 			SessionEvent idle = SessionStatusEvents.idle(sessionId, runId, stopReason);
@@ -228,23 +232,23 @@ public final class TurnService {
 	 * payload. A parked session holds no turn while the answer takes its time;
 	 * {@link #resume} starts the turn again.
 	 * <p>
-	 * Keyed by the run id, like {@link #end}: when the turn no longer runs under it,
-	 * nothing is written and the status as it stands is returned, and
-	 * {@link TurnStatus#isParked()} tells whether the question was recorded.
+	 * Keyed by the turn, like {@link #end}: when the turn no longer runs, nothing is
+	 * written and the status as it stands is returned, and {@link TurnStatus#isParked()}
+	 * tells whether the question was recorded.
 	 * @param sessionId the session
-	 * @param runId the run that holds the turn
+	 * @param turn the turn: the status that {@link #start} or {@link #resume} returned
 	 * @param question what the turn waits on
 	 * @return the status after the call: parked when this call parked the turn, otherwise
 	 * the status another writer left
 	 * @throws IllegalStateException if the write kept losing to other appends; the turn
 	 * still runs
 	 */
-	public TurnStatus park(String sessionId, String runId, Question question) {
+	public TurnStatus park(String sessionId, TurnStatus turn, Question question) {
 		Assert.hasText(sessionId, "sessionId must not be null or empty");
-		Assert.hasText(runId, "runId must not be null or empty");
+		String runId = runIdOf(turn);
 		Assert.notNull(question, "question must not be null");
 		return writeStatus(sessionId, (version, current) -> {
-			if (!current.isRunning(runId)) {
+			if (!current.stillRuns(turn)) {
 				return current;
 			}
 			SessionEvent asked = QuestionEvents.ask(sessionId, question);
@@ -290,6 +294,29 @@ public final class TurnService {
 	 * or if the write kept losing to other appends
 	 */
 	public TurnStatus resume(String sessionId, @Nullable String runId, @Nullable Object answer) {
+		return resume(sessionId, runId, null, answer);
+	}
+
+	/**
+	 * Resumes a parked session with the answer to the question the caller read, and
+	 * returns the new status. Works as {@link #resume(String, String, Object)}, and
+	 * refuses when the pending question is no longer the one the caller read: another
+	 * caller answered it, and the turn parked again on a new question. The check runs
+	 * inside the version-checked write, so an answer meant for one question never answers
+	 * another.
+	 * @param sessionId the session
+	 * @param runId the run the resumed turn runs under; {@code null} for a fresh one
+	 * @param questionEventId the event id of the question the answer is for; {@code null}
+	 * for whatever question is pending
+	 * @param answer the answer, stored as JSON; {@code null} for an acknowledgement
+	 * @return the status after the call: {@code RUNNING} under the effective run id
+	 * @throws TurnInProgressException if a turn runs on the session
+	 * @throws IllegalStateException if the session is not parked, has no open question,
+	 * or its open question is not the given one, or if the write kept losing to other
+	 * appends
+	 */
+	public TurnStatus resume(String sessionId, @Nullable String runId, @Nullable String questionEventId,
+			@Nullable Object answer) {
 		Assert.hasText(sessionId, "sessionId must not be null or empty");
 		String requestRunId = StringUtils.hasText(runId) ? runId : UUID.randomUUID().toString();
 		return writeStatus(sessionId, (version, current) -> {
@@ -306,11 +333,28 @@ public final class TurnService {
 				throw new IllegalStateException(
 						"Session '" + sessionId + "' is parked but has no open question to answer");
 			}
+			if (questionEventId != null && !questionEventId.equals(pending.getId())) {
+				throw new IllegalStateException("The question '" + questionEventId + "' of session '" + sessionId
+						+ "' already has an answer; the open question is '" + pending.getId() + "'");
+			}
 			SessionEvent answered = QuestionEvents.answer(sessionId, pending.getId(), answer);
 			SessionEvent running = SessionStatusEvents.running(sessionId, requestRunId);
 			return this.sessionService.appendEvents(sessionId, List.of(answered, running), version)
 					? TurnStatus.from(running) : null;
 		}, () -> "Session '" + sessionId + "' could not be resumed: the log kept changing");
+	}
+
+	/**
+	 * The run id of a turn handed to {@link #end} or {@link #park}.
+	 * @throws IllegalArgumentException if the status is not one that {@link #start} or
+	 * {@link #resume} returned
+	 */
+	private static String runIdOf(TurnStatus turn) {
+		Assert.notNull(turn, "turn must not be null");
+		String runId = turn.runId();
+		Assert.isTrue(turn.isRunning() && turn.eventId() != null && runId != null,
+				"turn must be the RUNNING status that start or resume returned");
+		return runId;
 	}
 
 	/**

@@ -17,6 +17,7 @@
 package org.springaicommunity.session.turn;
 
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.jspecify.annotations.Nullable;
@@ -38,6 +39,7 @@ import org.springframework.ai.session.compaction.CompactionBoundary;
 import org.springframework.ai.session.compaction.WindowCompactionStrategy;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
@@ -127,7 +129,7 @@ class TurnServiceTests {
 	void endByItsOwnerRecordsTheStopReason() {
 		this.turns.start(this.sessionId, "run-1");
 
-		TurnStatus ended = this.turns.end(this.sessionId, "run-1", StopReason.END_TURN);
+		TurnStatus ended = this.turns.end(this.sessionId, turn(this.sessionId, "run-1"), StopReason.END_TURN);
 
 		assertThat(ended.status()).isEqualTo(SessionStatus.IDLE);
 		assertThat(ended.runId()).isEqualTo("run-1");
@@ -143,7 +145,7 @@ class TurnServiceTests {
 	void endByAnotherRunIdIsANoOp() {
 		TurnStatus running = this.turns.start(this.sessionId, "run-1");
 
-		TurnStatus status = this.turns.end(this.sessionId, "run-2", StopReason.END_TURN);
+		TurnStatus status = this.turns.end(this.sessionId, turn(this.sessionId, "run-2"), StopReason.END_TURN);
 
 		assertThat(status).isEqualTo(running);
 		assertThat(this.service.getEvents(this.sessionId)).hasSize(1);
@@ -155,7 +157,7 @@ class TurnServiceTests {
 		this.turns.start(this.sessionId, "run-1");
 		TurnStatus interrupted = this.turns.interrupt(this.sessionId, "stop");
 
-		TurnStatus status = this.turns.end(this.sessionId, "run-1", StopReason.END_TURN);
+		TurnStatus status = this.turns.end(this.sessionId, turn(this.sessionId, "run-1"), StopReason.END_TURN);
 
 		assertThat(status).isEqualTo(interrupted);
 		assertThat(status.stopReason()).isEqualTo(StopReason.INTERRUPTED);
@@ -164,7 +166,8 @@ class TurnServiceTests {
 
 	@Test
 	void endOnAnIdleSessionIsANoOp() {
-		assertThat(this.turns.end(this.sessionId, "run-1", StopReason.ERROR)).isEqualTo(TurnStatus.idle());
+		assertThat(this.turns.end(this.sessionId, turn(this.sessionId, "run-1"), StopReason.ERROR))
+			.isEqualTo(TurnStatus.idle());
 		assertThat(this.service.getEvents(this.sessionId)).isEmpty();
 	}
 
@@ -191,7 +194,7 @@ class TurnServiceTests {
 	@Test
 	void interruptWhileIdleRecordsTheRequestOnly() {
 		this.turns.start(this.sessionId, "run-1");
-		TurnStatus ended = this.turns.end(this.sessionId, "run-1", StopReason.END_TURN);
+		TurnStatus ended = this.turns.end(this.sessionId, turn(this.sessionId, "run-1"), StopReason.END_TURN);
 
 		TurnStatus status = this.turns.interrupt(this.sessionId, null);
 
@@ -263,7 +266,8 @@ class TurnServiceTests {
 		this.repository.onVersionRead(Integer.MAX_VALUE, () -> this.store
 			.appendEvent(SessionEvent.builder().sessionId(this.sessionId).message(new UserMessage("late")).build()));
 
-		assertThatIllegalStateException().isThrownBy(() -> this.turns.end(this.sessionId, "run-1", StopReason.END_TURN))
+		assertThatIllegalStateException()
+			.isThrownBy(() -> this.turns.end(this.sessionId, turn(this.sessionId, "run-1"), StopReason.END_TURN))
 			.withMessageContaining("kept changing");
 		assertThat(this.turns.status(this.sessionId).isRunning("run-1")).isTrue();
 	}
@@ -289,7 +293,7 @@ class TurnServiceTests {
 		this.turns.start(this.sessionId, "run-1");
 		this.service.appendMessage(this.sessionId, new UserMessage("q1"));
 		this.service.appendMessage(this.sessionId, new AssistantMessage("a1"));
-		this.turns.end(this.sessionId, "run-1", StopReason.END_TURN);
+		this.turns.end(this.sessionId, turn(this.sessionId, "run-1"), StopReason.END_TURN);
 		this.turns.start(this.sessionId, "run-2");
 		this.service.appendMessage(this.sessionId, new UserMessage("q2"));
 		this.service.appendMessage(this.sessionId, new AssistantMessage("a2"));
@@ -315,6 +319,61 @@ class TurnServiceTests {
 		assertThat(boundary.preservedEventIds()).doesNotContainAnyElementsOf(statusIds);
 		// The status still reads after the compaction
 		assertThat(this.turns.status(this.sessionId).stopReason()).isEqualTo(StopReason.INTERRUPTED);
+	}
+
+	@Test
+	void lateEndNeverEndsALaterTurnUnderTheSameRunId() {
+		TurnStatus first = this.turns.start(this.sessionId, "run-1");
+		this.turns.interrupt(this.sessionId, "stop");
+		TurnStatus second = this.turns.start(this.sessionId, "run-1");
+
+		// The interrupted turn's harness ends its turn late
+		TurnStatus afterLateEnd = this.turns.end(this.sessionId, first, StopReason.END_TURN);
+
+		assertThat(afterLateEnd).isEqualTo(second);
+		assertThat(this.turns.status(this.sessionId).stillRuns(second)).isTrue();
+		assertThat(this.turns.status(this.sessionId).stillRuns(first)).isFalse();
+		assertThat(this.turns.end(this.sessionId, second, StopReason.END_TURN).stopReason())
+			.isEqualTo(StopReason.END_TURN);
+	}
+
+	@Test
+	void lateParkNeverParksALaterTurnUnderTheSameRunId() {
+		TurnStatus first = this.turns.start(this.sessionId, "run-1");
+		this.turns.interrupt(this.sessionId, "stop");
+		TurnStatus second = this.turns.start(this.sessionId, "run-1");
+
+		TurnStatus afterLatePark = this.turns.park(this.sessionId, first, new Question("approval", "Ship it?"));
+
+		assertThat(afterLatePark).isEqualTo(second);
+		assertThat(this.turns.pendingQuestion(this.sessionId)).isNull();
+		assertThat(this.turns.status(this.sessionId).stillRuns(second)).isTrue();
+	}
+
+	@Test
+	void endTakesOnlyTheStatusOfAStartedTurn() {
+		TurnStatus started = this.turns.start(this.sessionId, "run-1");
+		TurnStatus ended = this.turns.end(this.sessionId, started, StopReason.END_TURN);
+
+		// An idle status is not a turn
+		assertThatThrownBy(() -> this.turns.end(this.sessionId, ended, StopReason.END_TURN))
+			.isInstanceOf(IllegalArgumentException.class);
+		assertThatThrownBy(() -> this.turns.end(this.sessionId, TurnStatus.idle(), StopReason.END_TURN))
+			.isInstanceOf(IllegalArgumentException.class);
+	}
+
+	/** The turn that started last under the run id, whether it still runs or not. */
+	private TurnStatus turn(String sessionId, String runId) {
+		List<SessionEvent> events = this.service.getEvents(sessionId,
+				EventFilter.builder().eventTypes(Set.of(TurnEventTypes.STATUS)).build());
+		for (int i = events.size() - 1; i >= 0; i--) {
+			TurnStatus status = TurnStatus.from(events.get(i));
+			if (status.isRunning(runId)) {
+				return status;
+			}
+		}
+		// A turn that never started
+		return new TurnStatus(SessionStatus.RUNNING, runId, null, null, "never-started");
 	}
 
 }

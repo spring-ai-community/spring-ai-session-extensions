@@ -91,6 +91,18 @@ public record TurnStatus(SessionStatus status, @Nullable String runId, @Nullable
 	}
 
 	/**
+	 * Returns whether the given turn still runs on the session: this status is the one
+	 * {@link TurnService#start} or {@link TurnService#resume} returned for it. A turn is
+	 * identified by the status event that started it, so a later turn under the same run
+	 * id is another turn.
+	 * @param turn the status that {@code start} or {@code resume} returned
+	 */
+	public boolean stillRuns(TurnStatus turn) {
+		Assert.notNull(turn, "turn must not be null");
+		return isRunning() && this.eventId != null && this.eventId.equals(turn.eventId());
+	}
+
+	/**
 	 * Returns whether the session is parked on a question: idle with
 	 * {@link StopReason#REQUIRES_ACTION}. The status says no more than that;
 	 * {@link TurnService#pendingQuestion} returns the question, which says what it is

@@ -77,3 +77,13 @@
     background-color: #ebf2f2;
   }
 }
+
+/* Inline SVG diagrams take the page's text color and scale down on narrow screens. */
+.diagram {
+  text-align: center;
+}
+
+.diagram svg {
+  max-width: 100%;
+  height: auto;
+}

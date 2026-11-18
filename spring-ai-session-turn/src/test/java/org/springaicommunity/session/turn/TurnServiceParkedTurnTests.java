@@ -17,6 +17,7 @@
 package org.springaicommunity.session.turn;
 
 import java.util.List;
+import java.util.Set;
 import java.util.Map;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -74,7 +75,7 @@ class TurnServiceParkedTurnTests {
 		runningTurnWithAPausedReply();
 		int writes = this.repository.casWrites.get();
 
-		TurnStatus parked = this.turns.park(this.sessionId, "run-1", QUESTION);
+		TurnStatus parked = this.turns.park(this.sessionId, turn(this.sessionId, "run-1"), QUESTION);
 
 		assertThat(parked.status()).isEqualTo(SessionStatus.IDLE);
 		assertThat(parked.stopReason()).isEqualTo(StopReason.REQUIRES_ACTION);
@@ -94,7 +95,7 @@ class TurnServiceParkedTurnTests {
 	@Test
 	void startOnAParkedSessionThrows() {
 		runningTurnWithAPausedReply();
-		TurnStatus parked = this.turns.park(this.sessionId, "run-1", QUESTION);
+		TurnStatus parked = this.turns.park(this.sessionId, turn(this.sessionId, "run-1"), QUESTION);
 
 		assertThatExceptionOfType(TurnParkedException.class).isThrownBy(() -> this.turns.start(this.sessionId, "run-2"))
 			.withMessageContaining(this.sessionId)
@@ -108,12 +109,12 @@ class TurnServiceParkedTurnTests {
 	@Test
 	void parkWritesNothingWhenTheTurnDoesNotRunUnderTheRunId() {
 		// No turn at all
-		TurnStatus idle = this.turns.park(this.sessionId, "run-1", QUESTION);
+		TurnStatus idle = this.turns.park(this.sessionId, turn(this.sessionId, "run-1"), QUESTION);
 		assertThat(idle).isEqualTo(TurnStatus.idle());
 		assertThat(this.service.getEvents(this.sessionId)).isEmpty();
 		// A turn under another run
 		this.turns.start(this.sessionId, "other");
-		TurnStatus running = this.turns.park(this.sessionId, "run-1", QUESTION);
+		TurnStatus running = this.turns.park(this.sessionId, turn(this.sessionId, "run-1"), QUESTION);
 		assertThat(running.isRunning("other")).isTrue();
 		assertThat(questionEvents()).isEmpty();
 		assertThat(this.turns.pendingQuestion(this.sessionId)).isNull();
@@ -124,7 +125,7 @@ class TurnServiceParkedTurnTests {
 		this.turns.start(this.sessionId, "run-1");
 		this.turns.interrupt(this.sessionId, "user pressed stop");
 
-		TurnStatus status = this.turns.park(this.sessionId, "run-1", QUESTION);
+		TurnStatus status = this.turns.park(this.sessionId, turn(this.sessionId, "run-1"), QUESTION);
 
 		assertThat(status.stopReason()).isEqualTo(StopReason.INTERRUPTED);
 		assertThat(status.isParked()).isFalse();
@@ -136,7 +137,8 @@ class TurnServiceParkedTurnTests {
 		this.turns.start(this.sessionId, "run-1");
 		this.repository.onVersionRead(5, () -> this.store.appendEvent(message("meanwhile")));
 
-		assertThatIllegalStateException().isThrownBy(() -> this.turns.park(this.sessionId, "run-1", QUESTION))
+		assertThatIllegalStateException()
+			.isThrownBy(() -> this.turns.park(this.sessionId, turn(this.sessionId, "run-1"), QUESTION))
 			.withMessageContaining("kept changing");
 		assertThat(this.turns.status(this.sessionId).isRunning("run-1")).isTrue();
 		assertThat(questionEvents()).isEmpty();
@@ -145,7 +147,7 @@ class TurnServiceParkedTurnTests {
 	@Test
 	void resumeAnswersTheQuestionAndStartsTheTurnInOneAppend() {
 		runningTurnWithAPausedReply();
-		this.turns.park(this.sessionId, "run-1", QUESTION);
+		this.turns.park(this.sessionId, turn(this.sessionId, "run-1"), QUESTION);
 		String questionId = this.turns.pendingQuestion(this.sessionId).getId();
 		int writes = this.repository.casWrites.get();
 
@@ -162,14 +164,32 @@ class TurnServiceParkedTurnTests {
 		assertThat(log.get(log.size() - 1).getId()).isEqualTo(resumed.eventId());
 		assertThat(this.turns.pendingQuestion(this.sessionId)).isNull();
 		// The turn runs as any other: it ends, and a new one starts
-		assertThat(this.turns.end(this.sessionId, "run-2", StopReason.END_TURN).stopReason())
+		assertThat(this.turns.end(this.sessionId, turn(this.sessionId, "run-2"), StopReason.END_TURN).stopReason())
 			.isEqualTo(StopReason.END_TURN);
 		assertThat(this.turns.start(this.sessionId, "run-3").isRunning("run-3")).isTrue();
 	}
 
 	@Test
+	void resumeForAQuestionThatAlreadyHasItsAnswerIsRefused() {
+		this.turns.park(this.sessionId, this.turns.start(this.sessionId, "run-1"), QUESTION);
+		String first = this.turns.pendingQuestion(this.sessionId).getId();
+		// Another caller answers the first question, and the turn parks again
+		this.turns.resume(this.sessionId, "run-1", first, DECISIONS);
+		this.turns.park(this.sessionId, turn(this.sessionId, "run-1"), QUESTION);
+		String second = this.turns.pendingQuestion(this.sessionId).getId();
+		int writes = this.repository.casWrites.get();
+
+		assertThatIllegalStateException().isThrownBy(() -> this.turns.resume(this.sessionId, "run-2", first, DECISIONS))
+			.withMessageContaining("already has an answer");
+
+		assertThat(this.repository.casWrites).hasValue(writes);
+		assertThat(this.turns.pendingQuestion(this.sessionId).getId()).isEqualTo(second);
+		assertThat(this.turns.resume(this.sessionId, "run-2", second, DECISIONS).isRunning("run-2")).isTrue();
+	}
+
+	@Test
 	void resumeMayKeepTheRunId() {
-		this.turns.park(this.sessionId, this.turns.start(this.sessionId, "run-1").runId(), QUESTION);
+		this.turns.park(this.sessionId, this.turns.start(this.sessionId, "run-1"), QUESTION);
 
 		TurnStatus resumed = this.turns.resume(this.sessionId, "run-1", null);
 
@@ -183,7 +203,7 @@ class TurnServiceParkedTurnTests {
 
 	@Test
 	void resumeGeneratesARunIdWhenNoneIsGiven() {
-		this.turns.park(this.sessionId, this.turns.start(this.sessionId, "run-1").runId(), QUESTION);
+		this.turns.park(this.sessionId, this.turns.start(this.sessionId, "run-1"), QUESTION);
 
 		assertThat(this.turns.resume(this.sessionId, null, "ok").runId()).isNotBlank().isNotEqualTo("run-1");
 	}
@@ -195,7 +215,7 @@ class TurnServiceParkedTurnTests {
 			.withMessageContaining("not parked");
 		// Ended, not parked
 		this.turns.start(this.sessionId, "run-1");
-		this.turns.end(this.sessionId, "run-1", StopReason.END_TURN);
+		this.turns.end(this.sessionId, turn(this.sessionId, "run-1"), StopReason.END_TURN);
 		assertThatIllegalStateException().isThrownBy(() -> this.turns.resume(this.sessionId, "run-2", "ok"))
 			.withMessageContaining("not parked");
 		// Running: the busy exception, as for a start
@@ -208,19 +228,19 @@ class TurnServiceParkedTurnTests {
 
 	@Test
 	void secondResumeWithTheSameAnswerIsRefusedAndRecordsNothing() {
-		this.turns.park(this.sessionId, this.turns.start(this.sessionId, "run-1").runId(), QUESTION);
+		this.turns.park(this.sessionId, this.turns.start(this.sessionId, "run-1"), QUESTION);
 		this.turns.resume(this.sessionId, "run-2", DECISIONS);
 
 		assertThatExceptionOfType(TurnInProgressException.class)
 			.isThrownBy(() -> this.turns.resume(this.sessionId, "run-2", DECISIONS));
-		this.turns.end(this.sessionId, "run-2", StopReason.END_TURN);
+		this.turns.end(this.sessionId, turn(this.sessionId, "run-2"), StopReason.END_TURN);
 		assertThatIllegalStateException().isThrownBy(() -> this.turns.resume(this.sessionId, "run-2", DECISIONS));
 		assertThat(answerEvents()).hasSize(1);
 	}
 
 	@Test
 	void twoResumesLeaveOneWinner() {
-		this.turns.park(this.sessionId, this.turns.start(this.sessionId, "run-1").runId(), QUESTION);
+		this.turns.park(this.sessionId, this.turns.start(this.sessionId, "run-1"), QUESTION);
 		// Another node resumes between this node's version read and its write
 		this.repository.onVersionRead(1, () -> this.turns.resume(this.sessionId, "fast", "ok"));
 
@@ -234,7 +254,7 @@ class TurnServiceParkedTurnTests {
 
 	@Test
 	void resumeThatLosesToAnAppendRetriesAndWins() {
-		this.turns.park(this.sessionId, this.turns.start(this.sessionId, "run-1").runId(), QUESTION);
+		this.turns.park(this.sessionId, this.turns.start(this.sessionId, "run-1"), QUESTION);
 		int writes = this.repository.casWrites.get();
 		this.repository.onVersionRead(1, () -> this.store.appendEvent(message("meanwhile")));
 
@@ -246,18 +266,18 @@ class TurnServiceParkedTurnTests {
 	@Test
 	void questionAndAnswerEventsAreNeverInTheActiveViewAndNeverCovered() {
 		runningTurnWithAPausedReply();
-		this.turns.park(this.sessionId, "run-1", QUESTION);
+		this.turns.park(this.sessionId, turn(this.sessionId, "run-1"), QUESTION);
 		this.turns.resume(this.sessionId, "run-1", DECISIONS);
 		this.service.appendMessage(this.sessionId,
 				ToolResponseMessage.builder()
 					.responses(List.of(new ToolResponseMessage.ToolResponse("c1", "bookFlight", "Booked.")))
 					.build());
 		this.service.appendMessage(this.sessionId, new AssistantMessage("Your flight is booked."));
-		this.turns.end(this.sessionId, "run-1", StopReason.END_TURN);
+		this.turns.end(this.sessionId, turn(this.sessionId, "run-1"), StopReason.END_TURN);
 		this.turns.start(this.sessionId, "run-2");
 		this.service.appendMessage(this.sessionId, new UserMessage("Thanks"));
 		this.service.appendMessage(this.sessionId, new AssistantMessage("You are welcome."));
-		this.turns.end(this.sessionId, "run-2", StopReason.END_TURN);
+		this.turns.end(this.sessionId, turn(this.sessionId, "run-2"), StopReason.END_TURN);
 
 		this.service.compact(this.sessionId, request -> true, WindowCompactionStrategy.builder().lastTurns(1).build());
 
@@ -312,6 +332,20 @@ class TurnServiceParkedTurnTests {
 
 	private List<SessionEvent> events(EventType type) {
 		return this.service.getEvents(this.sessionId).stream().filter(event -> type.equals(event.getType())).toList();
+	}
+
+	/** The turn that started last under the run id, whether it still runs or not. */
+	private TurnStatus turn(String sessionId, String runId) {
+		List<SessionEvent> events = this.service.getEvents(sessionId,
+				EventFilter.builder().eventTypes(Set.of(TurnEventTypes.STATUS)).build());
+		for (int i = events.size() - 1; i >= 0; i--) {
+			TurnStatus status = TurnStatus.from(events.get(i));
+			if (status.isRunning(runId)) {
+				return status;
+			}
+		}
+		// A turn that never started
+		return new TurnStatus(SessionStatus.RUNNING, runId, null, null, "never-started");
 	}
 
 }

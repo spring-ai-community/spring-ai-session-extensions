@@ -88,7 +88,7 @@ abstract class AbstractTurnServiceContractTests {
 		assertThatThrownBy(() -> this.turns.start(id, "run-2")).isInstanceOfSatisfying(TurnInProgressException.class,
 				ex -> assertThat(ex.getRunId()).isEqualTo("run-1"));
 
-		this.turns.end(id, "run-1", StopReason.END_TURN);
+		this.turns.end(id, turn(id, "run-1"), StopReason.END_TURN);
 		TurnStatus ended = this.turns.status(id);
 		assertThat(ended.status()).isEqualTo(SessionStatus.IDLE);
 		assertThat(ended.runId()).isEqualTo("run-1");
@@ -98,7 +98,8 @@ abstract class AbstractTurnServiceContractTests {
 		append(id, new UserMessage("u2"));
 		assertThat(this.turns.interrupt(id, "user pressed stop").stopReason()).isEqualTo(StopReason.INTERRUPTED);
 		// The interrupted run's own end is a no-op: the interrupt stands
-		assertThat(this.turns.end(id, "run-2", StopReason.END_TURN).stopReason()).isEqualTo(StopReason.INTERRUPTED);
+		assertThat(this.turns.end(id, turn(id, "run-2"), StopReason.END_TURN).stopReason())
+			.isEqualTo(StopReason.INTERRUPTED);
 		assertThat(this.turns.status(id).runId()).isEqualTo("run-2");
 		assertThat(this.repository.findEvents(id, ofType(TurnEventTypes.INTERRUPT))).singleElement()
 			.satisfies(event -> assertThat(SessionStatusEvents.reason(event)).isEqualTo("user pressed stop"));
@@ -120,7 +121,7 @@ abstract class AbstractTurnServiceContractTests {
 		this.repository.appendEvent(replyEvent);
 		ToolConfirmationQuestion asked = ToolConfirmationQuestion.of(replyEvent.getId(), reply, List.of("c1", "c2"));
 
-		assertThat(this.turns.park(id, "run-1", asked.toQuestion()).isParked()).isTrue();
+		assertThat(this.turns.park(id, turn(id, "run-1"), asked.toQuestion()).isParked()).isTrue();
 
 		assertThat(this.turns.status(id).isParked()).isTrue();
 		assertThatThrownBy(() -> this.turns.start(id, "run-2")).isInstanceOf(TurnParkedException.class);
@@ -141,7 +142,7 @@ abstract class AbstractTurnServiceContractTests {
 		assertThatThrownBy(() -> this.turns.resume(id, null, ToolConfirmationQuestion.answer(decisions)))
 			.isInstanceOf(TurnInProgressException.class);
 
-		this.turns.end(id, "run-1", StopReason.END_TURN);
+		this.turns.end(id, turn(id, "run-1"), StopReason.END_TURN);
 		assertThat(labels(this.repository.findEvents(id, EventFilter.all()))).containsExactly("RUNNING",
 				"Book flight VX205 and pay", "A[bookFlight, pay]", "TURN.QUESTION", "IDLE", "TURN.ANSWER", "RUNNING",
 				"IDLE");
@@ -216,6 +217,20 @@ abstract class AbstractTurnServiceContractTests {
 			}
 			return event.getType().name();
 		}).toList();
+	}
+
+	/** The turn that started last under the run id, whether it still runs or not. */
+	private TurnStatus turn(String sessionId, String runId) {
+		List<SessionEvent> events = this.sessionService.getEvents(sessionId,
+				EventFilter.builder().eventTypes(Set.of(TurnEventTypes.STATUS)).build());
+		for (int i = events.size() - 1; i >= 0; i--) {
+			TurnStatus status = TurnStatus.from(events.get(i));
+			if (status.isRunning(runId)) {
+				return status;
+			}
+		}
+		// A turn that never started
+		return new TurnStatus(SessionStatus.RUNNING, runId, null, null, "never-started");
 	}
 
 }

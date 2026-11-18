@@ -15,7 +15,7 @@
  */
 
 /**
- * The {@code ChatClient} binding of the session turn.
+ * The {@code ChatClient} binding of the session turn: the {@link TurnStatusAdvisor}.
  */
 @NullMarked
 package org.springaicommunity.session.turn.advisor;

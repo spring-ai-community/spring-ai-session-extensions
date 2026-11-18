@@ -17,15 +17,15 @@ It uses only the public extension points of the session: event types of its own,
 
 | Module | Artifact | Description |
 |--------|----------|-------------|
-| **Session Turn** | `spring-ai-session-turn` | Turn state for a session, kept as events in the session log. No dependency on the `ChatClient`. |
-| **Session Turn Advisor** | `spring-ai-session-turn-advisor` | The `ChatClient` binding of the turn: an advisor around the Spring AI session advisors. |
+| **Session Turn** | `spring-ai-session-turn` | The `TurnService`: it starts, ends, interrupts, parks and resumes the turns of a session, and records each change as a `TURN.*` event in the session's log. It works with any Spring AI session store and does not depend on the `ChatClient`. |
+| **Session Turn Advisor** | `spring-ai-session-turn-advisor` | The `ChatClient` binding of the turn. The `TurnStatusAdvisor` runs every call as a turn, parks a turn whose tool call waits for a person's confirmation, and resumes it from the decisions. The `TurnInterruptAdvisor` stops the tool loop of an interrupted call. `TurnAdvisors` builds the whole advisor chain. |
 | **BOM** | `spring-ai-session-extensions-bom` | Bill of Materials for the module versions. |
 
 Stores beyond the ones in Spring AI go into [`session-repositories`](session-repositories/README.md).
 
 The group id is `org.springaicommunity`. The Java packages start with `org.springaicommunity.session`.
 
-`spring-ai-session-turn` has the `TurnService`: it starts, ends, interrupts, parks and resumes the turns of a session, and records each change as a `TURN.*` event in the session's log. It works with any Spring AI session store. `spring-ai-session-turn-advisor` is empty for now.
+[Turn Status](docs/turn/turn-status.md) explains the turn service, and [Turns in the ChatClient](docs/turn/chat-client.md) the `ChatClient` binding.
 
 ## Building
 
