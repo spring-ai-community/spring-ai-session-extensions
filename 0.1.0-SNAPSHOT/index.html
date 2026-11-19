@@ -259,6 +259,28 @@
   
 
       
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="session-repositories/kafka/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Session Repositories
+
+        </a>
+      </li>
+    
+  
+
+      
     </ul>
   </div>
 </nav>
@@ -515,6 +537,97 @@
   
 
     
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Session Repositories
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Session Repositories
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="session-repositories/kafka/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kafka
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
   </ul>
 </nav>
                   </div>
@@ -613,13 +726,19 @@ It uses only the public extension points of the session: event types of its own,
 <td>The <code>ChatClient</code> binding of the turn. The <code>TurnStatusAdvisor</code> runs every call as a turn, parks a turn whose tool call waits for a person's confirmation, and resumes it from the decisions. The <code>TurnInterruptAdvisor</code> stops the tool loop of an interrupted call. <code>TurnAdvisors</code> builds the whole advisor chain.</td>
 </tr>
 <tr>
+<td><strong>Session Kafka</strong></td>
+<td><code>spring-ai-session-kafka</code></td>
+<td>A <code>SessionRepository</code> that keeps sessions in Kafka, for teams that already run Kafka and want agent memory there, with no extra database. Each session has one owner that handles its calls one at a time, and the state is backed by compacted topics. It passes the Spring AI session repository contract tests.</td>
+</tr>
+<tr>
 <td><strong>BOM</strong></td>
 <td><code>spring-ai-session-extensions-bom</code></td>
 <td>Bill of Materials for the module versions.</td>
 </tr>
 </tbody>
 </table>
-<p><a href="turn/turn-status/">Turn Status</a> explains the turn service, and <a href="turn/chat-client/">Turns in the ChatClient</a> the <code>ChatClient</code> binding.</p>
+<p><a href="turn/turn-status/">Turn Status</a> explains the turn service, and <a href="turn/chat-client/">Turns in the ChatClient</a> the <code>ChatClient</code> binding.
+<a href="session-repositories/kafka/">Kafka Session Repository</a> explains the Kafka store.</p>
 <p>Stores beyond the ones in Spring AI go into the <code>session-repositories</code> folder of the project.
 A store is built here first and moves into Spring AI when it is stable.</p>
 
