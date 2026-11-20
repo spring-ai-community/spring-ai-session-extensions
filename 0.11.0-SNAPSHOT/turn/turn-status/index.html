@@ -1,0 +1,1326 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Add-ons for the session in Spring AI 2.1">
+      
+      
+      
+      
+        <link rel="prev" href="../..">
+      
+      
+        <link rel="next" href="../chat-client/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/spring-ai-logo.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.2">
+    
+    
+      
+        <title>Turn Status - Spring AI Session Extensions</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.57a0d79d.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.fb2fffe2.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#turn-status" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Spring AI Session Extensions" class="md-header__button md-logo" aria-label="Spring AI Session Extensions" data-md-component="logo">
+      
+  <img src="../../assets/images/spring-ai-logo.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Spring AI Session Extensions
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Turn Status
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/spring-ai-community/spring-ai-session-extensions" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    spring-ai-community/spring-ai-session-extensions
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="./" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Turns
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../session-repositories/kafka/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Session Repositories
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Spring AI Session Extensions" class="md-nav__button md-logo" aria-label="Spring AI Session Extensions" data-md-component="logo">
+      
+  <img src="../../assets/images/spring-ai-logo.svg" alt="logo">
+
+    </a>
+    Spring AI Session Extensions
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/spring-ai-community/spring-ai-session-extensions" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    spring-ai-community/spring-ai-session-extensions
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Turns
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Turns
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Turn Status
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Turn Status
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#using-it" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Using it
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-the-log-holds" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What the log holds
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#status-and-stop-reasons" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Status and stop reasons
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-each-method-does-in-each-state" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What each method does in each state
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-run-id" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The run id
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-a-change-is-written" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How a change is written
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The types
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#a-turn-that-waits-for-a-person" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A turn that waits for a person
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-it-does-not-do" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What it does not do
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chat-client/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Turns in the ChatClient
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Session Repositories
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Session Repositories
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../session-repositories/kafka/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kafka
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#using-it" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Using it
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-the-log-holds" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What the log holds
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#status-and-stop-reasons" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Status and stop reasons
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-each-method-does-in-each-state" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What each method does in each state
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-run-id" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The run id
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-a-change-is-written" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How a change is written
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The types
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#a-turn-that-waits-for-a-person" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A turn that waits for a person
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-it-does-not-do" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What it does not do
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+                
+
+
+
+  
+
+
+  <nav class="md-path" aria-label="Navigation" >
+    <ol class="md-path__list">
+      
+        
+  
+  
+    <li class="md-path__item">
+      <a href="../.." class="md-path__link">
+        
+  <span class="md-ellipsis">
+    Home
+  </span>
+
+      </a>
+    </li>
+  
+
+      
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="./" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    Turns
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ol>
+  </nav>
+
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="turn-status">Turn Status<a class="headerlink" href="#turn-status" title="Permanent link">&para;</a></h1>
+<p>A turn is one piece of work a harness does on a session: from a user's message to the model's last answer, with every tool call in between.
+<code>spring-ai-session-turn</code> records in the session's log whether a turn runs, under which run id, and why the last one ended.</p>
+<p>This solves three problems that a plain conversation log has:</p>
+<ul>
+<li><strong>Two harnesses can run one session at the same time.</strong> Two instances, or two browser tabs, append their messages in between each other's. With a turn status, the second one is refused.</li>
+<li><strong>A running turn cannot be stopped from elsewhere.</strong> A stop button on another instance has nothing to write to. With a turn status, it records an interrupt that the running harness reads.</li>
+<li><strong>A turn that waits for a person is lost on a restart.</strong> A tool call that needs a confirmation pauses the turn, and the pause lives only in memory. With a turn status, the question is in the log, and any instance can resume the turn with the answer.</li>
+</ul>
+<p>The module works with any Spring AI session store, because it uses only what every store has: events of its own type, a read by type, and a version-checked append.</p>
+<h2 id="using-it">Using it<a class="headerlink" href="#using-it" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">TurnService</span><span class="w"> </span><span class="n">turns</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">TurnService</span><span class="p">(</span><span class="n">sessionService</span><span class="p">);</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="n">TurnStatus</span><span class="w"> </span><span class="n">turn</span><span class="p">;</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="k">try</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">    </span><span class="n">turn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">turns</span><span class="p">.</span><span class="na">start</span><span class="p">(</span><span class="n">sessionId</span><span class="p">,</span><span class="w"> </span><span class="n">runId</span><span class="p">);</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="p">}</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="n">TurnInProgressException</span><span class="w"> </span><span class="n">ex</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">busy</span><span class="p">(</span><span class="n">ex</span><span class="p">.</span><span class="na">getRunId</span><span class="p">());</span><span class="w">                     </span><span class="c1">// another turn runs: refuse, a 409 for example</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="p">}</span>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="n">TurnParkedException</span><span class="w"> </span><span class="n">ex</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">ask</span><span class="p">(</span><span class="n">turns</span><span class="p">.</span><span class="na">pendingQuestion</span><span class="p">(</span><span class="n">sessionId</span><span class="p">));</span><span class="w">   </span><span class="c1">// the session waits for an answer</span>
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="p">}</span>
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>
+</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="k">try</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a><span class="w">    </span><span class="c1">// run the turn: call the model, run tools, append messages</span>
+</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a><span class="w">    </span><span class="n">turns</span><span class="p">.</span><span class="na">end</span><span class="p">(</span><span class="n">sessionId</span><span class="p">,</span><span class="w"> </span><span class="n">turn</span><span class="p">,</span><span class="w"> </span><span class="n">StopReason</span><span class="p">.</span><span class="na">END_TURN</span><span class="p">);</span>
+</span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a><span class="p">}</span>
+</span><span id="__span-0-18"><a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="n">RuntimeException</span><span class="w"> </span><span class="n">ex</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-0-19"><a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a><span class="w">    </span><span class="n">turns</span><span class="p">.</span><span class="na">end</span><span class="p">(</span><span class="n">sessionId</span><span class="p">,</span><span class="w"> </span><span class="n">turn</span><span class="p">,</span><span class="w"> </span><span class="n">StopReason</span><span class="p">.</span><span class="na">ERROR</span><span class="p">);</span>
+</span><span id="__span-0-20"><a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a><span class="w">    </span><span class="k">throw</span><span class="w"> </span><span class="n">ex</span><span class="p">;</span>
+</span><span id="__span-0-21"><a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a><span class="p">}</span>
+</span></code></pre></div>
+<p><code>busy</code> and <code>ask</code> stand for what your application does.
+A refused start writes nothing and owns no turn.
+That is why it stays outside the second <code>try</code>: there is no turn to end.</p>
+<p>From anywhere else, a UI or another instance:</p>
+<div class="highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">turns</span><span class="p">.</span><span class="na">status</span><span class="p">(</span><span class="n">sessionId</span><span class="p">);</span><span class="w">                          </span><span class="c1">// RUNNING under run-7, or IDLE with a stop reason</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="n">turns</span><span class="p">.</span><span class="na">interrupt</span><span class="p">(</span><span class="n">sessionId</span><span class="p">,</span><span class="w"> </span><span class="s">"user pressed stop"</span><span class="p">);</span><span class="w">  </span><span class="c1">// ends the running turn</span>
+</span></code></pre></div>
+<p><code>TurnService</code> keeps no state. It reads and writes through the <code>SessionService</code>, so you can create one per call or keep one.</p>
+<h2 id="what-the-log-holds">What the log holds<a class="headerlink" href="#what-the-log-holds" title="Permanent link">&para;</a></h2>
+<p>Every change is an event in the session's log.</p>
+<table>
+<thead>
+<tr>
+<th>Event type</th>
+<th>Written when</th>
+<th>Payload</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>TURN.STATUS</code></td>
+<td>A turn starts, ends, parks or resumes</td>
+<td><code>status</code>, <code>runId</code>, <code>stopReason</code></td>
+</tr>
+<tr>
+<td><code>TURN.INTERRUPT</code></td>
+<td>Someone asks the running turn to stop</td>
+<td><code>reason</code></td>
+</tr>
+<tr>
+<td><code>TURN.QUESTION</code></td>
+<td>A turn stops to wait for an answer</td>
+<td><code>kind</code>, <code>value</code></td>
+</tr>
+<tr>
+<td><code>TURN.ANSWER</code></td>
+<td>The answer arrives and the turn goes on</td>
+<td><code>questionEventId</code>, <code>value</code></td>
+</tr>
+</tbody>
+</table>
+<p>None of these events carries a message.
+The session's active view holds message events only, so these events never reach a prompt, and a compaction never covers them.
+They stay in the log as the record of the session's turns.</p>
+<p>The status of a session is its newest <code>TURN.STATUS</code> event.
+A session without one is <code>IDLE</code>.
+There is no status column and no second store: the log is the only source.</p>
+<h2 id="status-and-stop-reasons">Status and stop reasons<a class="headerlink" href="#status-and-stop-reasons" title="Permanent link">&para;</a></h2>
+<p>A session is <code>RUNNING</code> while a turn runs, and <code>IDLE</code> otherwise.
+An idle session tells why its last turn ended:</p>
+<table>
+<thead>
+<tr>
+<th>Stop reason</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>END_TURN</code></td>
+<td>The turn ran to its end.</td>
+</tr>
+<tr>
+<td><code>ERROR</code></td>
+<td>The turn failed.</td>
+</tr>
+<tr>
+<td><code>INTERRUPTED</code></td>
+<td>Someone called <code>interrupt</code>. A <code>TURN.INTERRUPT</code> event sits right before it.</td>
+</tr>
+<tr>
+<td><code>CANCELLED</code></td>
+<td>The client stopped listening, a cancelled stream for example. Nobody asked the session to stop, so there is no <code>TURN.INTERRUPT</code> event.</td>
+</tr>
+<tr>
+<td><code>REQUIRES_ACTION</code></td>
+<td>The turn is parked on a question and waits for an answer.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="what-each-method-does-in-each-state">What each method does in each state<a class="headerlink" href="#what-each-method-does-in-each-state" title="Permanent link">&para;</a></h2>
+<p>For the methods of the turn service, a session is in one of three states:</p>
+<ul>
+<li><strong>Idle.</strong> No turn runs and no question is open. The status is <code>IDLE</code> with any stop reason but <code>REQUIRES_ACTION</code>, or the session has no status yet.</li>
+<li><strong>Running.</strong> A turn runs. The status is <code>RUNNING</code>.</li>
+<li><strong>Parked.</strong> A turn stopped on a question and waits for the answer. The status is <code>IDLE</code> with <code>REQUIRES_ACTION</code>. See <a href="#a-turn-that-waits-for-a-person">a turn that waits for a person</a>.</li>
+</ul>
+<pre class="mermaid"><code>stateDiagram-v2
+    direction LR
+    [*] --&gt; Idle
+    Idle --&gt; Running : start
+    Running --&gt; Idle : end, interrupt
+    Running --&gt; Parked : park
+    Parked --&gt; Running : resume</code></pre>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Idle</th>
+<th>Running</th>
+<th>Parked</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>start</code></td>
+<td>Starts a turn.</td>
+<td>Throws <code>TurnInProgressException</code>.</td>
+<td>Throws <code>TurnParkedException</code>.</td>
+</tr>
+<tr>
+<td><code>end</code></td>
+<td>Writes nothing.</td>
+<td>Ends the turn, when it is the caller's.</td>
+<td>Writes nothing.</td>
+</tr>
+<tr>
+<td><code>park</code></td>
+<td>Writes nothing.</td>
+<td>Parks the turn, when it is the caller's.</td>
+<td>Writes nothing.</td>
+</tr>
+<tr>
+<td><code>interrupt</code></td>
+<td>Records the request.</td>
+<td>Records the request and ends the turn with <code>INTERRUPTED</code>.</td>
+<td>Records the request. The question stays open.</td>
+</tr>
+<tr>
+<td><code>resume</code></td>
+<td>Throws <code>IllegalStateException</code>.</td>
+<td>Throws <code>TurnInProgressException</code>.</td>
+<td>Records the answer and runs the turn again.</td>
+</tr>
+</tbody>
+</table>
+<p><code>status</code> and <code>pendingQuestion</code> only read.</p>
+<p>Two rules of the parked state are easy to miss:</p>
+<ul>
+<li><strong><code>start</code> refuses a parked session.</strong> A new turn would leave the question open. Resume the session instead.</li>
+<li><strong><code>interrupt</code> does not close a question.</strong> A parked session has no turn to stop, so the session stays parked. To close the question, resume with an answer that says the person moved on.</li>
+</ul>
+<h2 id="the-run-id">The run id<a class="headerlink" href="#the-run-id" title="Permanent link">&para;</a></h2>
+<p>Every turn runs under a run id.
+The run id names the harness run that owns the turn: a request, a job, an agent run.
+The session does not interpret it.</p>
+<ul>
+<li><strong><code>start</code> and <code>resume</code> take a run id.</strong> When you pass <code>null</code>, they generate a random UUID. The returned status carries the run id either way.</li>
+<li><strong><code>end</code> and <code>park</code> take the turn, not the run id.</strong> The turn is the status that <code>start</code> or <code>resume</code> returned. A run id may repeat, so only that status tells one turn from a later one under the same run id.</li>
+<li><strong><code>interrupt</code> takes no run id.</strong> It ends whatever turn runs, so a stop button does not need to know the owner.</li>
+<li><strong>A refused start names the owner.</strong> <code>TurnInProgressException.getRunId()</code> returns the run id of the turn that runs.</li>
+<li><strong>An idle session keeps the run id of its last turn</strong>, next to the stop reason.</li>
+</ul>
+<p>A resume does not have to use the run id of the turn that parked.
+The turn often resumes on another instance, or hours later, under a run of its own.
+Pass the old run id to keep one run id across the pause, or pass <code>null</code> for a new one.</p>
+<div class="highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">TurnStatus</span><span class="w"> </span><span class="n">parked</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">turns</span><span class="p">.</span><span class="na">park</span><span class="p">(</span><span class="n">sessionId</span><span class="p">,</span><span class="w"> </span><span class="n">turn</span><span class="p">,</span><span class="w"> </span><span class="n">question</span><span class="p">);</span><span class="w">           </span><span class="c1">// IDLE, run-1, REQUIRES_ACTION</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="n">turns</span><span class="p">.</span><span class="na">resume</span><span class="p">(</span><span class="n">sessionId</span><span class="p">,</span><span class="w"> </span><span class="n">parked</span><span class="p">.</span><span class="na">runId</span><span class="p">(),</span><span class="w"> </span><span class="n">answer</span><span class="p">);</span><span class="w">                     </span><span class="c1">// RUNNING under run-1 again</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="n">turns</span><span class="p">.</span><span class="na">resume</span><span class="p">(</span><span class="n">sessionId</span><span class="p">,</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w"> </span><span class="n">answer</span><span class="p">);</span><span class="w">                               </span><span class="c1">// or RUNNING under a new run id</span>
+</span></code></pre></div>
+<h2 id="how-a-change-is-written">How a change is written<a class="headerlink" href="#how-a-change-is-written" title="Permanent link">&para;</a></h2>
+<p>Every method that changes the status follows the same steps.
+It reads the log's version, then the current status, and decides.
+Then it appends its events with the version it read.
+If another writer appended in between, the store refuses the append, and the method reads again and decides again.
+After five refused attempts it gives up with an <code>IllegalStateException</code>.</p>
+<p>This is what makes two concurrent starts safe: both read the same version, both try to append, and the store accepts exactly one.</p>
+<p>The activity of <code>start</code>:</p>
+<pre class="mermaid"><code>flowchart TD
+    A([start sessionId, runId]) --&gt; B[Read the log's version]
+    B --&gt; C[Read the newest TURN.STATUS event]
+    C --&gt; D{Does a turn run?}
+    D -- yes --&gt; E([Throw TurnInProgressException&lt;br/&gt;with the running run id])
+    D -- no --&gt; F{Is the session parked?}
+    F -- yes --&gt; G([Throw TurnParkedException])
+    F -- no --&gt; H[Append TURN.STATUS RUNNING&lt;br/&gt;against the version read]
+    H --&gt; I{Did the store accept it?}
+    I -- yes --&gt; J([Return RUNNING under the run id])
+    I -- no --&gt; K{Fifth attempt?}
+    K -- no --&gt; B
+    K -- yes --&gt; L([Throw IllegalStateException])</code></pre>
+<p><code>end</code>, <code>interrupt</code>, <code>park</code> and <code>resume</code> follow the same loop with their own decision:</p>
+<ul>
+<li><strong><code>end</code></strong> writes only while the caller's turn runs. Otherwise it writes nothing and returns the status as it stands. So a harness ends only its own turn: a late <code>end</code> never ends a later turn, and an interrupt that landed first stands.</li>
+<li><strong><code>interrupt</code></strong> writes the <code>TURN.INTERRUPT</code> event and, when a turn runs, the <code>TURN.STATUS</code> event that ends it, in one append.</li>
+<li><strong><code>park</code></strong> and <strong><code>resume</code></strong> are described below.</li>
+</ul>
+<h2 id="the-types">The types<a class="headerlink" href="#the-types" title="Permanent link">&para;</a></h2>
+<pre class="mermaid"><code>classDiagram
+    direction LR
+    class TurnService {
+        +TurnService(SessionService)
+        +status(sessionId) TurnStatus
+        +start(sessionId, runId) TurnStatus
+        +end(sessionId, turn, StopReason) TurnStatus
+        +interrupt(sessionId, reason) TurnStatus
+        +park(sessionId, turn, Question) TurnStatus
+        +pendingQuestion(sessionId) SessionEvent
+        +resume(sessionId, runId, answer) TurnStatus
+        +resume(sessionId, runId, questionEventId, answer) TurnStatus
+    }
+    class TurnStatus {
+        &lt;&lt;record&gt;&gt;
+        +status SessionStatus
+        +runId String
+        +stopReason StopReason
+        +since Instant
+        +eventId String
+        +isRunning() boolean
+        +stillRuns(turn) boolean
+        +isParked() boolean
+    }
+    class SessionStatus {
+        &lt;&lt;enumeration&gt;&gt;
+        IDLE
+        RUNNING
+    }
+    class StopReason {
+        &lt;&lt;enumeration&gt;&gt;
+        END_TURN
+        ERROR
+        INTERRUPTED
+        CANCELLED
+        REQUIRES_ACTION
+    }
+    class Question {
+        &lt;&lt;record&gt;&gt;
+        +kind String
+        +payload Object
+    }
+    class Answer {
+        &lt;&lt;record&gt;&gt;
+        +questionEventId String
+        +value Object
+    }
+    class ToolConfirmationQuestion {
+        &lt;&lt;record&gt;&gt;
+        +replyEventId String
+        +toolCalls List
+        +toQuestion() Question
+    }
+    class SessionService {
+        &lt;&lt;interface&gt;&gt;
+        +getEventVersion(sessionId) long
+        +appendEvents(sessionId, events, version) boolean
+        +getEvents(sessionId, filter) List
+    }
+    TurnService --&gt; SessionService : reads and writes through
+    TurnService ..&gt; TurnStatus : returns
+    TurnService ..&gt; Question : parks on
+    TurnStatus --&gt; SessionStatus
+    TurnStatus --&gt; StopReason
+    Answer ..&gt; Question : answers
+    ToolConfirmationQuestion ..&gt; Question : converts to</code></pre>
+<p><code>SessionService</code> is Spring AI's interface. <code>TurnEventTypes</code> holds the four event types, and <code>SessionStatusEvents</code> and <code>QuestionEvents</code> build and read the events. The diagram leaves those helpers out.</p>
+<h2 id="a-turn-that-waits-for-a-person">A turn that waits for a person<a class="headerlink" href="#a-turn-that-waits-for-a-person" title="Permanent link">&para;</a></h2>
+<p>A turn can stop to ask a person something and go on later with the answer, on any instance, after any delay.
+The built-in kind of question is a tool confirmation: a tool call that needs a person's decision.
+A harness can also park on a question of its own kind.</p>
+<ul>
+<li><strong><code>park</code></strong> writes a <code>TURN.QUESTION</code> event and a <code>TURN.STATUS</code> event <code>IDLE</code> with <code>REQUIRES_ACTION</code>, in one append. The session is then parked. It holds no turn while the person thinks.</li>
+<li><strong><code>pendingQuestion</code></strong> returns the open question: the newest <code>TURN.QUESTION</code> event when no <code>TURN.ANSWER</code> follows it.</li>
+<li><strong><code>resume</code></strong> writes a <code>TURN.ANSWER</code> event that points at the question, and a <code>TURN.STATUS</code> event <code>RUNNING</code>, in one append. Only a parked session resumes, so the same answer sent twice resumes once.</li>
+<li><strong><code>resume</code> with a question id</strong> refuses when that question already has an answer. Pass the id of the question you read with <code>pendingQuestion</code>. Two callers that read the same question then cannot both resume: the second one fails, even when the turn has parked again on a new question in between.</li>
+</ul>
+<p><code>ToolConfirmationQuestion</code> is the shape of a tool confirmation.
+It holds the event id of the stored reply and the reply's tool calls, each marked whether it waits for a decision.
+The answer is Spring AI's <code>ToolCallDecisions</code>.</p>
+<p>A harness parks a turn and a UI resumes it:</p>
+<pre class="mermaid"><code>sequenceDiagram
+    participant H as Harness
+    participant U as UI
+    participant T as TurnService
+    participant S as SessionService
+
+    H-&gt;&gt;T: start(sessionId, "run-1")
+    T-&gt;&gt;S: getEventVersion, newest TURN.STATUS
+    T-&gt;&gt;S: appendEvents [TURN.STATUS RUNNING]
+    Note over H: the model asks for a tool&lt;br/&gt;that needs a confirmation
+    H-&gt;&gt;T: park(sessionId, turn, question)
+    T-&gt;&gt;S: appendEvents [TURN.QUESTION,&lt;br/&gt;TURN.STATUS IDLE REQUIRES_ACTION]
+    Note over H,S: the harness may stop here, even restart
+    U-&gt;&gt;T: pendingQuestion(sessionId)
+    T-&gt;&gt;S: newest TURN.QUESTION or TURN.ANSWER
+    T--&gt;&gt;U: the question
+    U-&gt;&gt;T: resume(sessionId, "run-2", decisions)
+    T-&gt;&gt;S: appendEvents [TURN.ANSWER,&lt;br/&gt;TURN.STATUS RUNNING]
+    Note over U,S: the harness runs the allowed tools&lt;br/&gt;and the turn goes on</code></pre>
+<h2 id="what-it-does-not-do">What it does not do<a class="headerlink" href="#what-it-does-not-do" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>No guard on the log.</strong> An append never needs a running turn. A harness that does not call <code>start</code> still appends its messages, also while another turn runs. So the turn status protects a session only when every harness that writes to it runs its turns through the turn service.</li>
+<li><strong>No lease.</strong> A turn whose harness died stays <code>RUNNING</code> until someone calls <code>interrupt</code>, which ends it. A later version can add a lease that lets the next start take over a turn that ran too long.</li>
+<li><strong>One answer per question.</strong> The answer decides every tool call of the question at once. An application that collects decisions one by one holds them until it has all.</li>
+<li><strong>No stop by itself.</strong> An interrupt changes the status. The harness that runs the turn learns of it only when it reads the status, between two model calls for example. Check with <code>turns.status(sessionId).stillRuns(turn)</code>. The <a href="../chat-client/#interrupting-a-running-call"><code>ChatClient</code> binding</a> does this check for you.</li>
+<li><strong>No transaction around it.</strong> Run the turn service outside a surrounding transaction. Inside one with repeatable read isolation, the version read does not see what another writer committed, and every attempt fails.</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/spring-ai-community/spring-ai-session-extensions" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+      <div class="md-progress" data-md-component="progress" role="progressbar"></div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.instant.progress", "navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.top", "navigation.path", "navigation.indexes", "toc.follow", "search.suggest", "search.highlight", "content.code.copy", "content.code.annotate", "content.tabs.link"], "search": "../../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"default": ["latest-snapshot", "latest"], "provider": "mike"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.a5f9d56c.min.js"></script>
+      
+    
+  </body>
+</html>
