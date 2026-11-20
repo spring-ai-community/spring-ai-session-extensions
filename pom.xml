@@ -6,7 +6,7 @@
 
 	<groupId>org.springaicommunity</groupId>
 	<artifactId>spring-ai-session-extensions-parent</artifactId>
-	<version>0.11.0-SNAPSHOT</version>
+	<version>0.11.0</version>
 	<packaging>pom</packaging>
 
 	<name>Spring AI Session Extensions :: Parent</name>
