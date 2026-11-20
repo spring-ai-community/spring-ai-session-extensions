@@ -35,7 +35,7 @@ Import the BOM, so that the modules need no version:
         <dependency>
             <groupId>org.springaicommunity</groupId>
             <artifactId>spring-ai-session-extensions-bom</artifactId>
-            <version>0.11.0</version>
+            <version>0.11.1-SNAPSHOT</version>
             <type>pom</type>
             <scope>import</scope>
         </dependency>
