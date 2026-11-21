@@ -10,6 +10,7 @@ The layout follows Spring AI, which keeps its JDBC store in `session-repositorie
 | Store | Module | Docs |
 |---|---|---|
 | Kafka | [`spring-ai-session-kafka`](spring-ai-session-kafka) | [Kafka Session Repository](../docs/session-repositories/kafka.md) |
+| Redis | [`spring-ai-session-redis`](spring-ai-session-redis) | [Redis Session Repository](../docs/session-repositories/redis.md) |
 
 ## Path to Spring AI
 
