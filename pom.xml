@@ -60,6 +60,10 @@
 		<spring-ai.version>2.1.0</spring-ai.version>
 		<!-- The Spring Boot line that Spring AI 2.1 builds against. -->
 		<spring-boot.version>4.2.0</spring-boot.version>
+		<!-- The AWS SDK for the DynamoDB store; Spring Boot does not manage it. -->
+		<awssdk.version>2.59.7</awssdk.version>
+		<!-- The embedded DynamoDB of the DynamoDB store's tests. -->
+		<dynamodb-local.version>3.3.2</dynamodb-local.version>
 
 		<!-- plugin versions -->
 		<maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
@@ -80,6 +84,7 @@
 		<module>spring-ai-session-turn</module>
 		<module>spring-ai-session-turn-advisor</module>
 		<module>session-repositories/spring-ai-session-kafka</module>
+		<module>session-repositories/spring-ai-session-dynamodb</module>
 		<module>spring-ai-session-extensions-bom</module>
 	</modules>
 
@@ -104,6 +109,13 @@
 				<scope>import</scope>
 			</dependency>
 			<dependency>
+				<groupId>software.amazon.awssdk</groupId>
+				<artifactId>bom</artifactId>
+				<version>${awssdk.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+			<dependency>
 				<groupId>org.springaicommunity</groupId>
 				<artifactId>spring-ai-session-turn</artifactId>
 				<version>${project.version}</version>
@@ -117,6 +129,16 @@
 				<groupId>org.springaicommunity</groupId>
 				<artifactId>spring-ai-session-kafka</artifactId>
 				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springaicommunity</groupId>
+				<artifactId>spring-ai-session-dynamodb</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>software.amazon.dynamodb</groupId>
+				<artifactId>DynamoDBLocal</artifactId>
+				<version>${dynamodb-local.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

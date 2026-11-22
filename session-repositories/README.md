@@ -10,6 +10,7 @@ The layout follows Spring AI, which keeps its JDBC store in `session-repositorie
 | Store | Module | Docs |
 |---|---|---|
 | Kafka | [`spring-ai-session-kafka`](spring-ai-session-kafka) | [Kafka Session Repository](../docs/session-repositories/kafka.md) |
+| DynamoDB | [`spring-ai-session-dynamodb`](spring-ai-session-dynamodb) | [DynamoDB Session Repository](../docs/session-repositories/dynamodb.md) |
 
 ## Path to Spring AI
 
@@ -18,7 +19,7 @@ It is built and used here first, and moves into Spring AI when it is stable.
 The move changes the package from `org.springaicommunity.session.<store>` to `org.springframework.ai.session.<store>` and nothing else.
 
 Spring AI plans session stores for Cassandra, Neo4j, MongoDB and Redis before 3.0.0, when the deprecated chat memory stores are removed.
-Those four come first here.
+Those four are the priority here.
 
 ## A new store
 
