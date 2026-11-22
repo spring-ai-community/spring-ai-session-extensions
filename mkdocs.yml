@@ -44,6 +44,7 @@ nav:
     - Turns in the ChatClient: turn/chat-client.md
   - Session Repositories:
     - Kafka: session-repositories/kafka.md
+    - DynamoDB: session-repositories/dynamodb.md
 
 markdown_extensions:
   - admonition
